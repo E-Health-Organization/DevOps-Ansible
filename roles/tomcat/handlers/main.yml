@@ -1,0 +1,6 @@
+---
+# handlers file for role install-tomcat
+
+- name: Reload systemd
+  command: systemctl daemon-reload
+  become: yes

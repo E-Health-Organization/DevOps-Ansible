@@ -1,0 +1,4 @@
+- hosts: 192.168.100.40
+  become: yes
+  roles:
+    - tomcat

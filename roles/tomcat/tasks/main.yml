@@ -1,0 +1,79 @@
+---
+# Main tasks file for installing and configuring Tomcat on Ubuntu
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Install Java (OpenJDK)
+  apt:
+    name: default-jdk
+    state: present
+  become: yes
+
+- name: Create tomcat group
+  group:
+    name: tomcat
+    state: present
+  become: yes
+
+- name: Create tomcat user
+  user:
+    name: tomcat
+    group: tomcat
+    home: "{{ tomcat_install_dir }}"
+    shell: /bin/false
+    system: yes
+  become: yes
+
+- name: Download Tomcat archive
+  get_url:
+    url: "{{ tomcat_download_url }}"
+    dest: "/tmp/apache-tomcat.tar.gz"
+  become: yes
+
+- name: Create Tomcat installation directory
+  file:
+    path: "{{ tomcat_install_dir }}"
+    state: directory
+    owner: tomcat
+    group: tomcat
+    mode: '0755'
+  become: yes
+
+- name: Extract Tomcat archive
+  unarchive:
+    src: "/tmp/apache-tomcat.tar.gz"
+    dest: "{{ tomcat_install_dir }}"
+    remote_src: yes
+    creates: "{{ tomcat_install_dir }}/apache-tomcat-{{ tomcat_version }}"
+  become: yes
+
+- name: Change ownership of Tomcat installation
+  file:
+    path: "{{ tomcat_install_dir }}"
+    owner: tomcat
+    group: tomcat
+    recurse: yes
+  become: yes
+
+- name: Deploy Tomcat systemd service file
+  template:
+    src: tomcat.service.j2
+    dest: /etc/systemd/system/tomcat.service
+    mode: '0644'
+  become: yes
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: Enable and start Tomcat service
+  systemd:
+    name: tomcat
+    state: started
+    enabled: yes
+  become: yes
+  notify: Reload systemd
