@@ -6,6 +6,13 @@
     update_cache: yes
   become: yes
 
+- name: Install Maven
+  apt:
+    name: maven
+    state: present
+  become: yes
+
+
 - name: Install Java (OpenJDK)
   apt:
     name: default-jdk
