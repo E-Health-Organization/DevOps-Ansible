@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         GIT_REPO = 'git@github.com:E-Health-Organization/DevOps-Ansible.git' 
-        BRANCH = 'main' 
+        BRANCH = 'targetpipeline' 
         ANSIBLE_PLAYBOOK = 'install-tomcat.yaml'  // Playbook file name
         INVENTORY_FILE = 'inventory.ini'  // Ansible inventory file
         SSH_KEY = credentials('ansible-ssh-key')
