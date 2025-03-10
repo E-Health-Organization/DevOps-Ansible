@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    environment {
+        ANSIBLE_INVENTORY = "/var/lib/jenkins/playbooks/inventory.ini"
+        PLAYBOOK = "/var/lib/jenkins/playbooks/playbook.yml"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    echo "Récupération du code source si applicable"
+                }
+            }
+        }
+
+        stage('Execute Playbook') {
+            steps {
+                script {
+                    sh """
+                    ansible-playbook -i $ANSIBLE_INVENTORY $PLAYBOOK
+                    """
+                }
+            }
+        }
+
+    }
+}

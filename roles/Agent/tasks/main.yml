@@ -1,0 +1,38 @@
+---
+- name: Mettre à jour la liste des paquets
+  apt:
+    update_cache: yes
+
+- name: Installer Java (OpenJDK 17)
+  apt:
+    name: "{{ java_package }}"
+    state: present
+
+- name: Installer Apache Ant
+  apt:
+    name: "{{ ant_package }}"
+    state: present
+
+- name: Installer Apache Maven
+  apt:
+    name: "{{ maven_package }}"
+    state: present
+
+- name: Vérifier les versions installées
+  shell: "{{ item }} -version"
+  register: versions
+  with_items:
+    - java
+    - ant
+    - mvn
+  changed_when: false
+
+- name: Afficher les versions installées
+  debug:
+    msg: "{{ item.stdout }}"
+  with_items: "{{ versions.results }}"
+
+- name: Enregistrer les résultats dans un fichier
+  copy:
+    content: "{{ versions.results | to_nice_json }}"
+    dest: /tmp/install_report.json

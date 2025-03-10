@@ -1,0 +1,7 @@
+---
+- name: Installation des outils de développement
+  hosts: 10.0.2.4
+  become: yes
+
+  roles:
+    - Agent
